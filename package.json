@@ -1,0 +1,29 @@
+{
+  "name": "tftp2",
+  "version": "0.0.0",
+  "description": "simple tftp server and client in node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "url": "git+https://github.com/song940/node-tftp.git",
+    "type": "git"
+  },
+  "author": "Lsong <song940@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/song940/node-tftp/issues"
+  },
+  "homepage": "https://github.com/song940/node-tftp#readme",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "keywords": [
+    "tftp",
+    "tftpd",
+    "ftp"
+  ]
+}

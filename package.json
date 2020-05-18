@@ -1,6 +1,6 @@
 {
   "name": "tftp2",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "simple tftp server and client in node.js",
   "main": "index.js",
   "scripts": {

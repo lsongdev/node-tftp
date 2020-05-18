@@ -13,11 +13,13 @@ const readChunk = filename =>
 (async () => {
 
   const filename = `node-tftp-test-data`;
-  await write(filename, Buffer.allocUnsafe(0xffffff));
+  const a = Buffer.allocUnsafe(0xffffff);
+  await write(filename, a);
 
   console.log('write done');
   const b = await readChunk(filename);
 
+  console.log('read done');
   assert.equal(a.length, 0xffffff);
   assert.equal(b.length, 0xffffff);
   assert.deepEqual(a, b);

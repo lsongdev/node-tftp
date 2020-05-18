@@ -1,19 +1,19 @@
 const udp = require('dgram');
 const { debuglog } = require('util');
-const EventEmitter = require('events');
 const Packet = require('./packet');
 
 const debug = debuglog('tftp2:server');
 
-class Connection extends EventEmitter {
+class Connection extends udp.Socket {
   constructor(rinfo) {
     super('udp4');
+    this.socket = this;
     this.setRemoteDescription(rinfo);
   }
   setRemoteDescription(rinfo) {
     return Object.assign(this, this.rinfo = rinfo);
   }
-  send(data) {
+  sendPacket(data) {
     const { rinfo } = this;
     if (data instanceof Packet)
       data = data.toBuffer();
@@ -26,19 +26,19 @@ class Connection extends EventEmitter {
   }
   sendRequest(opcode, filename) {
     const packet = Packet.createRequest(opcode, filename);
-    return this.send(packet);
+    return this.sendPacket(packet);
   };
   sendAck(block) {
     const { rinfo } = this;
     const packet = Packet.createAck(block);
     debug('send ack block %s to %s:%s', block, rinfo.address, rinfo.port);
-    return this.send(packet);
+    return this.sendPacket(packet);
   }
   sendBlock(block, data) {
     const { rinfo } = this;
     const packet = Packet.createData(block, data);
     debug('send block %s size %s, to %s:%s', block, data.length, rinfo.address, rinfo.port);
-    return this.send(packet);
+    return this.sendPacket(packet);
   }
   wait(fn) {
     return new Promise((resolve, reject) => {

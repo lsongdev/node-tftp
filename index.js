@@ -11,16 +11,25 @@ const debug = debuglog('tftp2');
 const TFTP = (host, port, { BLOCK_SIZE = 512 } = {}) => {
   const rinfo = { address: host, port };
   const client = new Connection(rinfo);
-  const init = () => client.setRemoteDescription(rinfo);
+  const reset = () => client.setRemoteDescription(rinfo);
   return {
+    close() {
+      return client.close();
+    },
+    /**
+     * read
+     * @param {*} filename 
+     * @param {*} push 
+     * @param {*} done 
+     */
     async read(filename, push, done) {
       let block = 0, rinfo, data;
-      await init();
+      await reset();
       await client.sendRequest(Packet.OPCODE.RRQ, filename);
       while (true) {
         ({ rinfo, block, data } = await client.waitBlock(block + 1));
         debug('received block(%s) size(%s), from %s:%s', block, data.length, rinfo.address, rinfo.port);
-        push(data);
+        await push(data);
         await client.setRemoteDescription(rinfo);
         await client.sendAck(block);
         if (data.length < BLOCK_SIZE) {
@@ -29,9 +38,14 @@ const TFTP = (host, port, { BLOCK_SIZE = 512 } = {}) => {
         }
       }
     },
+    /**
+     * write
+     * @param {*} filename 
+     * @param {*} data 
+     */
     async write(filename, data) {
       let block, rinfo;
-      await init();
+      await reset();
       await client.sendRequest(Packet.OPCODE.WRQ, filename);
       const blocks = Math.floor(data.length / BLOCK_SIZE | 0) + 1;
       for (var i = 0; i < blocks; i++) {

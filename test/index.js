@@ -38,3 +38,27 @@ test('Packet#decode', () => {
   assert.equal(a.filename, b.filename);
   assert.equal(b.mode, 'octet');
 });
+
+const { read, write, close } = tftp('127.0.0.1', '6969');
+
+const readChunk = filename =>
+  new Promise(async (resolve, reject) => {
+    const buffer = [];
+    await read(filename, chunk => buffer.push(chunk), () =>
+      resolve(Buffer.concat(buffer)));
+  });
+
+const filename = `node-tftp-test-data`;
+const a = Buffer.allocUnsafe(0xffffff);
+
+test('tftp#write', async () => {
+  await write(filename, a);
+});
+
+test('tftp#read', async () => {
+  const b = await readChunk(filename);
+  assert.equal(a.length, 0xffffff);
+  assert.equal(b.length, 0xffffff);
+  assert.deepEqual(a, b);
+  close();
+});

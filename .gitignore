@@ -1,5 +1,6 @@
 
 *.log
 yarn.lock
+node-tftp-test-data
 
 node_modules/
